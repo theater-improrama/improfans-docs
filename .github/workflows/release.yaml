@@ -41,4 +41,4 @@ jobs:
         with:
           prerelease: false
           tag_name: ${{ github.ref_name }}
-          files: ./public/website.tar.gz
+          files: ./public/website_${{ github.ref_name }}.tar.gz

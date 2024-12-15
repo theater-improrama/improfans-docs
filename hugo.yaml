@@ -1,0 +1,38 @@
+baseURL: https://example.org/
+languageCode: en-US
+title: ImproFans Developer Documentation
+
+module:
+  imports:
+    - path: github.com/imfing/hextra
+
+params:
+  footer:
+    displayCopyright: true
+  navbar:
+    displayTitle: true
+    displayLogo: true
+
+menu:
+  main:
+    - name: ImproFans
+      url: https://improfans.de
+      weight: 2
+    - name: Imprint
+      url: https://improfans.de/p/imprint
+      weight: 3
+    - name: Search
+      weight: 4
+      params:
+        type: search
+    - name: GitHub
+      weight: 5
+      url: "https://github.com/theater-improrama/improfans-docs"
+      params:
+        icon: github
+
+deployment:
+  targets:
+    - name: "dev.improfans.de"
+      url: "file://./public"
+      stripIndexHTML: true

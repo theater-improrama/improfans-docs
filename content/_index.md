@@ -9,4 +9,4 @@ On this website you will find any documentation related to ImproFans.
 
 ## Webhooks
 
-If you want to know more about how to configure and use webhooks, take a look [here](/docs/webhook).
+If you want to know more about how to configure and use webhooks, take a look [here](/webhooks).

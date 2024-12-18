@@ -1,6 +1,6 @@
 ---
 title: 'Webhooks'
-date: 2024-12-15T01:25:38+01:00
+date: 2024-12-18T01:25:38+01:00
 ---
 
 ## Create the Webhook on ImproFans
@@ -36,13 +36,13 @@ where the payload is described in the following:
 
 Field | Description | Data type
 --- | --- | ---
-`event` | Type of the webhook event. | String (one of: `benefit`)
+`event` | Type of the webhook event. | String (only: `benefit`)
 `data.id` | ID of the benefit (= donation). | String ([UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier))
 `data.amount` | Amount of the benefit. | Number
 `data.currency` | Currency of the benefit. | String (only: `EUR`)
 `data.message` | Message of the benefit. | String
-`data.donor_id` | Donor id of the benefit. | String ([UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier))
-`data.donor_name` | Donor name of the benefit. | String
+`data.donor_id` | Donor id of the benefit. | String ([UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier)), `null`
+`data.donor_name` | Donor name of the benefit. | String, `null`
 `data.created_at` | When the benefit was created. | String ([ISO 8601](https://www.iso.org/obp/ui/#iso:std:iso:8601:-1:ed-1:v1:en))
 
 
@@ -50,7 +50,7 @@ Field | Description | Data type
   Your webhook endpoint/receiver must be able to parse JSON (most platforms and programming languages support JSON parsing by default).
 {{< /callout >}}
 
-After you have successfully received the webhook, a [HTTP 200 OK](https://developer.mozilla.org/de/docs/Web/HTTP/Status/200) status code has to be returned as the result status. A status code different to 200 OK will mark the webhook event as failed and may (or may not) be re-send to your endpoint.
+After you have successfully received the webhook, a [HTTP 200 OK](https://developer.mozilla.org/de/docs/Web/HTTP/Status/200) status code has to be returned as the result status. A status code different to 200 OK will mark the webhook event as failed and may be resend to your endpoint.
 
 ## Advanced: Verifying the integrity
 
@@ -65,9 +65,7 @@ For example:
 X-Signature: B7BE60F73971924D9547C6C8C755866DF9DA56C19AD50B7B571827F6823D8434EA46AE1D4FADFBE4E46A9518747817A0F63FE6D4E59503982E07BDEBC8788C22
 ```
 
-To verify that a webhook event was sent by us, simply download our public key which use for signing [here](https://improfans.de/api/webhooks/keys/public) and verify the signature. The public key is an EC (elliptic curve) key and is returned in standard PEM encoding.
-
-Alternatively, this is our public key:
+This is our public key - it's an EC (elliptic curves public key):
 
 ```
 -----BEGIN PUBLIC KEY-----
@@ -88,11 +86,10 @@ Here is a quick example of how to verify the signature of a webhook request in a
 
     import (
         "crypto/ecdsa"
+        "crypto/sha256"
         "crypto/x509"
         "encoding/hex"
-        "encoding/json"
         "encoding/pem"
-        "fmt"
         "io"
         "log"
         "math/big"
@@ -104,61 +101,33 @@ Here is a quick example of how to verify the signature of a webhook request in a
     oXl2WZLGwKysLdYPdsyc7Dc3UOPPFPdQH5Mjp24kDjiCVztCeNYc/PqR7Q==
     -----END PUBLIC KEY-----`
 
-    // WebhookPayload represents the incoming webhook data structure
-    type WebhookPayload struct {
-        Event string      `json:"event"`
-        Data  BenefitData `json:"data"`
-    }
+    var publicKey *ecdsa.PublicKey
 
-    type BenefitData struct {
-        ID        string  `json:"id"`
-        Amount    float64 `json:"amount"`
-        Currency  string  `json:"currency"`
-        Message   string  `json:"message"`
-        DonorID   string  `json:"donor_id"`
-        DonorName string  `json:"donor_name"`
-        CreatedAt string  `json:"created_at"`
-    }
-
-    func loadPublicKey() (*ecdsa.PublicKey, error) {
-        block, _ := pem.Decode([]byte(publicKeyPEM))
-        if block == nil {
-            return nil, fmt.Errorf("failed to decode PEM block")
-        }
-
-        pub, err := x509.ParsePKIXPublicKey(block.Bytes)
+    func main() {
+        // Parse the public key once at startup
+        var err error
+        publicKey, err = parsePublicKey(publicKeyPEM)
         if err != nil {
-            return nil, fmt.Errorf("failed to parse public key: %v", err)
+            log.Fatalf("Failed to parse public key: %v", err)
         }
 
-        ecdsaPub, ok := pub.(*ecdsa.PublicKey)
-        if !ok {
-            return nil, fmt.Errorf("public key is not ECDSA")
-        }
-
-        return ecdsaPub, nil
+        http.HandleFunc("/webhook", handleWebhook)
+        
+        log.Println("Server starting on :8080")
+        log.Fatal(http.ListenAndServe(":8080", nil))
     }
 
-    func verifySignature(publicKey *ecdsa.PublicKey, signature string, payload []byte) bool {
-        // Convert hex signature to bytes
-        sigBytes, err := hex.DecodeString(signature)
-        if err != nil {
-            return false
-        }
-
-        // ECDSA signature is two big integers (r,s) concatenated
-        // Split signature into r and s components
-        r := new(big.Int).SetBytes(sigBytes[:len(sigBytes)/2])
-        s := new(big.Int).SetBytes(sigBytes[len(sigBytes)/2:])
-
-        // Verify the signature
-        return ecdsa.Verify(publicKey, payload, r, s)
-    }
-
-    func webhookHandler(w http.ResponseWriter, r *http.Request) {
+    func handleWebhook(w http.ResponseWriter, r *http.Request) {
         // Only accept POST requests
         if r.Method != http.MethodPost {
             http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+            return
+        }
+
+        // Read the signature from header
+        signature := r.Header.Get("X-Signature")
+        if signature == "" {
+            http.Error(w, "Missing signature", http.StatusBadRequest)
             return
         }
 
@@ -170,51 +139,65 @@ Here is a quick example of how to verify the signature of a webhook request in a
         }
         defer r.Body.Close()
 
-        // Get the signature from header
-        signature := r.Header.Get("X-Signature")
-        if signature == "" {
-            http.Error(w, "Missing signature", http.StatusBadRequest)
-            return
-        }
-
-        // Load public key
-        publicKey, err := loadPublicKey()
+        // Verify the signature
+        valid, err := verifySignature(body, signature)
         if err != nil {
-            log.Printf("Failed to load public key: %v", err)
-            http.Error(w, "Internal server error", http.StatusInternalServerError)
+            log.Printf("Signature verification error: %v", err)
+            http.Error(w, "Invalid signature format", http.StatusBadRequest)
             return
         }
 
-        // Verify signature
-        if !verifySignature(publicKey, signature, body) {
+        if !valid {
+            log.Printf("Invalid signature for payload: %s", string(body))
             http.Error(w, "Invalid signature", http.StatusUnauthorized)
             return
         }
 
-        // Parse the payload
-        var payload WebhookPayload
-        if err := json.Unmarshal(body, &payload); err != nil {
-            http.Error(w, "Invalid payload", http.StatusBadRequest)
-            return
-        }
-
-        // Validate event type
-        if payload.Event != "benefit" {
-            http.Error(w, "Invalid event type", http.StatusBadRequest)
-            return
-        }
-
-        // Process the verified payload
-        log.Printf("Received verified benefit: %+v\n", payload)
+        // Signature is valid, log the payload
+        log.Printf("Received valid webhook: %s", string(body))
         w.WriteHeader(http.StatusOK)
     }
 
-    func main() {
-        http.HandleFunc("/webhook", webhookHandler)
-        
-        port := ":3000"
-        log.Printf("Server starting on port %s", port)
-        log.Fatal(http.ListenAndServe(port, nil))
+    func verifySignature(message []byte, signatureHex string) (bool, error) {
+        // Decode the hex signature
+        signature, err := hex.DecodeString(signatureHex)
+        if err != nil {
+            return false, err
+        }
+
+        // Signature should be exactly 64 bytes (r and s are 32 bytes each)
+        if len(signature) != 64 {
+            return false, err
+        }
+
+        // Split signature into r and s
+        r := new(big.Int).SetBytes(signature[:32])
+        s := new(big.Int).SetBytes(signature[32:])
+
+        // Calculate the hash of the message
+        hash := sha256.Sum256(message)
+
+        // Verify the signature
+        return ecdsa.Verify(publicKey, hash[:], r, s), nil
+    }
+
+    func parsePublicKey(pemKey string) (*ecdsa.PublicKey, error) {
+        block, _ := pem.Decode([]byte(pemKey))
+        if block == nil {
+            return nil, err
+        }
+
+        pub, err := x509.ParsePKIXPublicKey(block.Bytes)
+        if err != nil {
+            return nil, err
+        }
+
+        ecdsaPub, ok := pub.(*ecdsa.PublicKey)
+        if !ok {
+            return nil, err
+        }
+
+        return ecdsaPub, nil
     }
     ```
   {{< /tab >}}
@@ -226,87 +209,75 @@ Here is a quick example of how to verify the signature of a webhook request in a
 
     const app = express();
 
-    // Store the public key as a constant
-    const PUBLIC_KEY = `-----BEGIN PUBLIC KEY-----
-    MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWZrLPi5uAvrLKQ5mgWLXICH3bkk2
-    oXl2WZLGwKysLdYPdsyc7Dc3UOPPFPdQH5Mjp24kDjiCVztCeNYc/PqR7Q==
-    -----END PUBLIC KEY-----`;
-
-    // Parse JSON bodies with raw body buffer for verification
+    // Configure Express to get raw body for verification
     app.use(express.json({
         verify: (req, res, buf) => {
-            // Store raw body for verification
+            // Store raw body for signature verification
             req.rawBody = buf;
         }
     }));
 
-    function verifySignature(signature, payload) {
+    // The public key used for verification
+    const publicKeyPEM = `-----BEGIN PUBLIC KEY-----
+    MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWZrLPi5uAvrLKQ5mgWLXICH3bkk2
+    oXl2WZLGwKysLdYPdsyc7Dc3UOPPFPdQH5Mjp24kDjiCVztCeNYc/PqR7Q==
+    -----END PUBLIC KEY-----`;
+
+    function verifySignature(message, signatureHex) {
         try {
             // Convert hex signature to buffer
-            const sigBuffer = Buffer.from(signature, 'hex');
+            const signature = Buffer.from(signatureHex, 'hex');
             
-            // ECDSA signature is two equal-length integers (r,s)
-            const signatureLength = sigBuffer.length;
-            if (signatureLength % 2 !== 0) {
+            // Signature should be exactly 64 bytes (r and s are 32 bytes each)
+            if (signature.length !== 64) {
                 throw new Error('Invalid signature length');
             }
 
-            const halfLength = signatureLength / 2;
-            
             // Split signature into r and s components
-            const r = sigBuffer.slice(0, halfLength);
-            const s = sigBuffer.slice(halfLength);
+            const r = signature.slice(0, 32);
+            const s = signature.slice(32);
 
-            // Create DER encoding of the signature
-            const derSignature = crypto.BN.concat([r, s]);
-            
-            // Create the verifier
-            const verify = crypto.createVerify('SHA256');
-            verify.update(payload);
-            
-            // Verify using the DER-encoded signature
-            return verify.verify({
-                key: PUBLIC_KEY,
-                dsaEncoding: 'ieee-p1363' // This ensures correct ECDSA signature format
-            }, derSignature);
+            // Create verifier
+            const verifier = crypto.createVerify('SHA256');
+            verifier.update(message);
+
+            // Convert raw signature to DER format
+            const derSignature = {
+                r: new crypto.BN(r),
+                s: new crypto.BN(s)
+            };
+
+            // Verify the signature
+            return verifier.verify({
+                key: publicKeyPEM,
+                dsaEncoding: 'ieee-p1363' // Use raw format for signature
+            }, Buffer.concat([r, s]));
         } catch (error) {
-            console.error('Signature verification failed:', error);
+            console.error('Signature verification error:', error);
             return false;
         }
     }
 
     app.post('/webhook', (req, res) => {
         try {
+            // Get signature from header
             const signature = req.headers['x-signature'];
             if (!signature) {
-                return res.status(400).json({ error: 'Missing signature header' });
+                console.log('Missing signature header');
+                return res.status(400).json({ error: 'Missing signature' });
             }
 
             // Verify signature using raw body
-            const isValid = verifySignature(signature, req.rawBody);
+            const isValid = verifySignature(req.rawBody, signature);
+            
             if (!isValid) {
+                console.log('Invalid signature for payload:', req.body);
                 return res.status(401).json({ error: 'Invalid signature' });
             }
 
-            // Process the verified webhook payload
-            const payload = req.body;
+            // Log the valid webhook
+            console.log('Received valid webhook:', req.body);
             
-            // Validate event type
-            if (payload.event !== 'benefit') {
-                return res.status(400).json({ error: 'Invalid event type' });
-            }
-
-            // Process the benefit data
-            const benefitData = payload.data;
-            console.log('Received verified benefit:', {
-                id: benefitData.id,
-                amount: benefitData.amount,
-                currency: benefitData.currency,
-                donorName: benefitData.donor_name,
-                message: benefitData.message,
-                createdAt: benefitData.created_at
-            });
-
             // Send success response
             res.status(200).json({ status: 'success' });
         } catch (error) {
@@ -315,25 +286,16 @@ Here is a quick example of how to verify the signature of a webhook request in a
         }
     });
 
-    // Health check endpoint
-    app.get('/health', (req, res) => {
-        res.status(200).json({ status: 'healthy' });
+    // Add basic error handling
+    app.use((err, req, res, next) => {
+        console.error('Unhandled error:', err);
+        res.status(500).json({ error: 'Internal server error' });
     });
 
-    const PORT = process.env.PORT || 3000;
+    // Start the server
+    const PORT = process.env.PORT || 8080;
     app.listen(PORT, () => {
         console.log(`Server is running on port ${PORT}`);
-    });
-
-    // Handle uncaught errors
-    process.on('uncaughtException', (error) => {
-        console.error('Uncaught Exception:', error);
-        process.exit(1);
-    });
-
-    process.on('unhandledRejection', (reason, promise) => {
-        console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-        process.exit(1);
     });
     ```
   {{< /tab >}}

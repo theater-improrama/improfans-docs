@@ -58,6 +58,9 @@ params:
   navbar:
     displayTitle: true
     displayLogo: true
+  editURL:
+    enable: true
+    base: "https://github.com/theater-improrama/improfans-docs/edit/main/content/"
 
 deployment:
   targets:

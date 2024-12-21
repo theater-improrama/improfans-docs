@@ -4,19 +4,19 @@ date: 2024-12-18T01:25:38+01:00
 next: streamelements-integration
 ---
 
-## Webhook bei ImproFans erstellen
+## Create the Webhook on ImproFans
 
-Melde dich in deinem ImproFans-Account bei den Webhook-Einstellungen (https://improfans.de/u/settings/webhook) an. Hier musst du die Webhook-URL hinzufügen, die im Falle einer Spende von ImproFans aufgerufen werden soll.
+Login into your ImproFans account webhook settings (https://improfans.de/u/settings/webhook\). Here, you have to add the webhook URL that should be triggered by ImproFans in case of a donation.
 
 {{< callout type="warning" >}}
-  Deine Webhook-URL muss das HTTPS-Protokoll benutzen. Unverschlüsselte HTTP-Endpunkte werden nicht akzeptiert.
+  Your webhook URL must use HTTPS scheme. Unencrypted HTTP endpoints will not be accepted.
 {{< /callout >}}
 
-## Verwendung
+## Usage
 
-ImproFans ruft deine konfigurierte Webhook-URL auf, sobald du eine Spende erhalten hast.
+ImproFans will invoke your configured webhook URL when you have received a donation.
 
-Dein Webhook wird folgende JSON-Payload von ImproFans empfangen:
+Your webhook will receive the following JSON payload by ImproFans:
 
 ```json
 {
@@ -34,41 +34,41 @@ Dein Webhook wird folgende JSON-Payload von ImproFans empfangen:
 }
 ```
 
-Hier sind die Felder für das `benefit`-Event näher beschrieben:
+where the payload is described in the following:
 
-| Feld | Beschreibung | Datentyp |
+| Field | Description | Data type |
 | --- | --- | --- |
-| `event` | Typ des Webhook-Events. | String (nur: `benefit`) |
-| `data.id` | ID des Benefits (= Spende). | String ([UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier)) |
-| `data.amount` | Betrag des Benefits. | Number |
-| `data.currency` | Währung des Benefits. | String (nur: `EUR`) |
-| `data.name` | Spendername des Benefits. Kann `null` sein, falls kein Name übergeben wurde (z. B. eine anonyme Spende). | String, `null` |
-| `data.message` | Nachricht zur Spende. | String |
-| `data.donor_id` | Optionale Spender-ID des Benefits. | String ([UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier)), `null` |
-| `data.is_subscription` | Zeigt an, ob diese Spende Teil eines Abonnements ist (WIP). | String ([UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier)), `null` |
-| `data.created_at` | Zeitstempel, wann der Benefit erstellt wurde. | String ([ISO 8601](https://www.iso.org/obp/ui/#iso:std:iso:8601:-1:ed-1:v1:en)) |
+| `event` | Type of the webhook event. | string (only: `benefit`) |
+| `data.id` | ID of the benefit (= donation). | string ([UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier)) |
+| `data.amount` | Amount of the benefit. | string |
+| `data.currency` | Currency of the benefit. | string (only: `EUR`) |
+| `data.message` | Message of the benefit. | string |
+| `data.donor_id` | Donor id of the benefit. May be null. | string ([UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier)), `null` |
+| `data.name` | Donor name of the benefit. May be null if no donor name was set (e. g. an anonymous donation) | string, `null` |
+| `data.is_subscription` | Whether or not this donation belongs to a donation. | bool |
+| `data.created_at` | When the benefit was created. | string ([ISO 8601](https://www.iso.org/obp/ui/#iso:std:iso:8601:-1:ed-1:v1:en)) |
+
 
 {{< callout type="info" >}}
-Dein Webhook-Endpunkt/Empfänger muss in der Lage sein, JSON zu parsen (die meisten Plattformen und Programmiersprachen unterstützen von Haus aus das Parsing von JSON).
+  Your webhook endpoint/receiver must be able to parse JSON (most platforms and programming languages support JSON parsing by default).
 {{< /callout >}}
 
-Wurde der Webhook erfolgreich empfangen, muss ein [HTTP 200 OK](https://developer.mozilla.org/de/docs/Web/HTTP/Status/200)-Statuscode als Ergebnis zurückgegeben werden. Ein Statuscode, der von 200 OK abweicht, markiert das Webhook-Event als fehlgeschlagen und kann erneut an deinen Endpunkt gesendet werden.
+After you have successfully received the webhook, a [HTTP 200 OK](https://developer.mozilla.org/de/docs/Web/HTTP/Status/200) status code has to be returned as the result status. A status code different to 200 OK will mark the webhook event as failed and may be resend to your endpoint.
 
-## Fortgeschritten: Validierung der Integrität
+## Advanced: Verifying the integrity
 
 {{< callout type="warning" >}}
-  Obwohl wir **dringend empfehlen**, die Webhook-Payload zu validieren, ist dies je nach Anwendungsfall nicht zwingend erforderlich.
+  Although we **highly recommend** verifying the webhook payload, depending on the use-case, verifying the payload might not be necessary.
 {{< /callout >}}
 
-Da dein Webhook öffentlich zugänglich sein muss, damit wir Events senden können, könnten bösartige Akteure ungültige Payloads an deinen Endpunkt senden. Daher signieren wir das HTTP-Payload mittels einer ECDSA-Signatur und stellen diese im HTTP-Header `X-Signature` bereit.
-
-Beispiel:
+As your webhook must be publicly accessible for us to send any events, malicious actors may sent invalid payloads to your endpoints. Hence, we sign the HTTP payload using an ECDSA signature and put it in the HTTP header `X-Signature`.
+For example:
 
 ```
 X-Signature: B7BE60F73971924D9547C6C8C755866DF9DA56C19AD50B7B571827F6823D8434EA46AE1D4FADFBE4E46A9518747817A0F63FE6D4E59503982E07BDEBC8788C22
 ```
 
-Dies ist unser öffentlicher Schlüssel – ein EC (Elliptic Curves Public Key):
+This is our public key - it's an EC (elliptic curves public key):
 
 ```
 -----BEGIN PUBLIC KEY-----
@@ -77,9 +77,9 @@ oXl2WZLGwKysLdYPdsyc7Dc3UOPPFPdQH5Mjp24kDjiCVztCeNYc/PqR7Q==
 -----END PUBLIC KEY-----
 ```
 
-### Beispiel
+### Example
 
-Hier ein kurzes Beispiel, wie du in einer Programmiersprache die Signatur einer Webhook-Anfrage überprüfen kannst:
+Here is a quick example of how to verify the signature of a webhook request in a programming language:
 
 {{< tabs items="Go,JS" >}}
 
@@ -244,8 +244,17 @@ Hier ein kurzes Beispiel, wie du in einer Programmiersprache die Signatur einer 
             const verifier = crypto.createVerify('SHA256');
             verifier.update(message);
 
-            // Verify the signature (using raw/ieee-p1363 format)
-            return verifier.verify({ key: publicKeyPEM, dsaEncoding: 'ieee-p1363' }, Buffer.concat([r, s]));
+            // Convert raw signature to DER format
+            const derSignature = {
+                r: new crypto.BN(r),
+                s: new crypto.BN(s)
+            };
+
+            // Verify the signature
+            return verifier.verify({
+                key: publicKeyPEM,
+                dsaEncoding: 'ieee-p1363' // Use raw format for signature
+            }, Buffer.concat([r, s]));
         } catch (error) {
             console.error('Signature verification error:', error);
             return false;

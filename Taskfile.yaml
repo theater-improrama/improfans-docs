@@ -5,3 +5,9 @@ tasks:
     cmds:
       - commit-and-tag-version
       - git push --follow-tags origin main
+  build-production:
+    cmds:
+      - hugo --gc --minify --baseURL "https://dev.improfans.de/"
+  serve:
+    cmds:
+      - hugo server --buildDrafts --disableFastRender

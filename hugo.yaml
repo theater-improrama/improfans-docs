@@ -1,6 +1,52 @@
-baseURL: https://example.org/
-languageCode: en-US
-title: ImproFans Developer Documentation
+baseURL: https://dev.improfans.de/
+defaultContentLanguage: de
+defaultContentLanguageInSubdir: true
+
+languages:
+  de:
+    languageCode: de-DE
+    languageName: Deutsch
+    title: ImproFans Entwicklerdokumentation
+    weight: 0
+    menu:
+      main:
+        - name: ImproFans
+          url: https://improfans.de
+          weight: 2
+        - name: Impressum
+          url: https://improfans.de/p/imprint
+          weight: 3
+        - name: Suche
+          weight: 4
+          params:
+            type: search
+        - name: GitHub
+          weight: 5
+          url: "https://github.com/theater-improrama/improfans-docs"
+          params:
+            icon: github
+  en:
+    languageCode: en-US
+    languageName: English
+    title: ImproFans Developer Documentation
+    weight: 1
+    menu:
+      main:
+        - name: ImproFans
+          url: https://improfans.de
+          weight: 2
+        - name: Imprint
+          url: https://improfans.de/p/imprint
+          weight: 3
+        - name: Search
+          weight: 4
+          params:
+            type: search
+        - name: GitHub
+          weight: 5
+          url: "https://github.com/theater-improrama/improfans-docs"
+          params:
+            icon: github
 
 module:
   imports:
@@ -12,24 +58,6 @@ params:
   navbar:
     displayTitle: true
     displayLogo: true
-
-menu:
-  main:
-    - name: ImproFans
-      url: https://improfans.de
-      weight: 2
-    - name: Imprint
-      url: https://improfans.de/p/imprint
-      weight: 3
-    - name: Search
-      weight: 4
-      params:
-        type: search
-    - name: GitHub
-      weight: 5
-      url: "https://github.com/theater-improrama/improfans-docs"
-      params:
-        icon: github
 
 deployment:
   targets:

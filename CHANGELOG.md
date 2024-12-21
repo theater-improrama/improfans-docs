@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.3.0](https://github.com/theater-improrama/improfans-docs/compare/v1.2.3...v1.3.0) (2024-12-21)
+
+
+### Features
+
+* add images ([8b65b91](https://github.com/theater-improrama/improfans-docs/commit/8b65b912ce6beeebec816754f3994e580099a0f0))
+* stream elements docs ([f592524](https://github.com/theater-improrama/improfans-docs/commit/f59252479df68cfa6ccbd5ca8c65982f63dfbf98))
+
 ## [1.2.3](https://github.com/theater-improrama/improfans-docs/compare/v1.2.2...v1.2.3) (2024-12-18)
 
 

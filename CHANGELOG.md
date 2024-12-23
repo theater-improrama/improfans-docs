@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.4.0](https://github.com/theater-improrama/improfans-docs/compare/v1.3.1...v1.4.0) (2024-12-23)
+
+
+### Features
+
+* add privcacy policy ([a23f949](https://github.com/theater-improrama/improfans-docs/commit/a23f9491b87e1fe4e851972cd2395757a4ba792b))
+
 ## [1.3.1](https://github.com/theater-improrama/improfans-docs/compare/v1.3.0...v1.3.1) (2024-12-21)
 
 ## [1.3.0](https://github.com/theater-improrama/improfans-docs/compare/v1.2.3...v1.3.0) (2024-12-21)

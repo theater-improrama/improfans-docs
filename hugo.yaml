@@ -14,14 +14,17 @@ languages:
           url: https://improfans.de
           weight: 2
         - name: Impressum
-          url: https://improfans.de/p/imprint
+          url: https://improfans.de/de/p/imprint
           weight: 3
-        - name: Suche
+        - name: Datenschutzerklärung
+          url: https://improfans.de/en/p/privacy-policy
           weight: 4
+        - name: Suche
+          weight: 5
           params:
             type: search
         - name: GitHub
-          weight: 5
+          weight: 6
           url: "https://github.com/theater-improrama/improfans-docs"
           params:
             icon: github
@@ -36,14 +39,17 @@ languages:
           url: https://improfans.de
           weight: 2
         - name: Imprint
-          url: https://improfans.de/p/imprint
+          url: https://improfans.de/de/p/imprint
           weight: 3
-        - name: Search
+        - name: Privacy Policy
+          url: https://improfans.de/en/p/privacy-policy
           weight: 4
+        - name: Search
+          weight: 5
           params:
             type: search
         - name: GitHub
-          weight: 5
+          weight: 6
           url: "https://github.com/theater-improrama/improfans-docs"
           params:
             icon: github

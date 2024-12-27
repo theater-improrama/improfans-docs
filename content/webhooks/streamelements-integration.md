@@ -24,7 +24,7 @@ Damit du die API von StreamElements nutzen kannst, benötigst du deine StreamEle
 ### Pipedream konfigurieren
 
 1. Logge dich bei Pipedream ein und öffne die [Projektübersicht](https://pipedream.com/projects).
-2. Erstelle einen neuen Workflow, indem du auf *New Workflow* klickst:
+2. Erstelle einen neuen Workflow, indem du oben rechts auf *New Workflow* klickst:
     ![image](/images/webhooks/streamelements-integration/02_new-workflow.jpg)
 3. Gib einen Namen für das Projekt des Workflows an (bspw. `ImproFans Webhook`) und klicke auf *Create project and continue*:
     ![image](/images/webhooks/streamelements-integration/03_create-project.jpg)
@@ -33,7 +33,7 @@ Damit du die API von StreamElements nutzen kannst, benötigst du deine StreamEle
     {{< /callout >}}
 4. Gib nun einen Namen für den eigentlichen Workflow an (bspw. `StreamElements`) und klicke auf *Create Workflow*:
     ![image](/images/webhooks/streamelements-integration/04_create-workflow.jpg)
-5. Füg' nun einen Trigger für den Webhook hinzu. Der Trigger gibt dir den Webhook-Link, den du später bei ImproFans hinzufügen musst:
+5. Füg' nun einen Trigger für den Webhook hinzu. Der Trigger gibt dir den Webhook-Link, den du später bei ImproFans hinzufügen musst. Klicke dazu auf den blauen *Add Trigger*-Button:
     ![image](/images/webhooks/streamelements-integration/05_add-trigger.jpg)
 6. Wähle hierzu *HTTP / Webhook* aus:
     ![image](/images/webhooks/streamelements-integration/06_select-trigger-1.jpg)
@@ -41,62 +41,60 @@ Damit du die API von StreamElements nutzen kannst, benötigst du deine StreamEle
     ![image](/images/webhooks/streamelements-integration/07_select-trigger-2.jpg)
 8. Bestätige das Hinzufügen des Triggers, indem du auf *Save and continue* klickst:
     ![image](/images/webhooks/streamelements-integration/08_configure-trigger.jpg)
-9.  1. Der Link in der roten Box ist der Webhook-Endpoint. Diesen fügst du weiter unten auf ImproFans unter deinen Webhooks hinzu;
-    2. Klicke auf das *+*-Symbol, um eine neue Action hinzuzufügen - in diesem Falle den Code für die StreamElements-Verknüpfung:
+9. Kopiere nun den Link in der rot markierten Box:
+    ![image](/images/webhooks/streamelements-integration/09_copy-endpoint-url.jpg)
+10. Logge dich in deinen ImproFans-Account ein und öffne die [Webhook-Übersicht](https://improfans.de/u/webhooks). Füge den Link vom vorherigen Schritt nun hier ein und drücke anschließend auf *Webhook hinzufügen*:
+    ![image](/images/webhooks/streamelements-integration/10_add-improfans-webhook.de.jpg)
+11. Zurück zu Pipedream. Klicke auf das *+*-Symbol, um eine neue Action hinzuzufügen - in diesem Falle den Code für die StreamElements-Verknüpfung:
+    ![image](/images/webhooks/streamelements-integration/11_add-action.jpg)
+12. Wähle hierzu *Node* aus:
+    ![image](/images/webhooks/streamelements-integration/12_select-action-1.jpg)
+13. ... und danach *Run Node code*:
+    ![image](/images/webhooks/streamelements-integration/13_select-action-2.jpg)
+14. Vergebe hier zunächst einen neuen Namen für die Action (bspw. `streamelements_tip`). Klicke dazu einfach auf den Namen der Action (standardmäßig *code*) und gib dann einen neuen Namen ein:
+    ![image](/images/webhooks/streamelements-integration/14_configure-action-1.jpg)
+15. Füge den Code unter dem Bild in der rot markierten Box ein:
+    ![image](/images/webhooks/streamelements-integration/15_configure-action-2.jpg)
+    ```js
+    import axios from "axios"
 
-    ![image](/images/webhooks/streamelements-integration/09_add-action.jpg)
-10. Wähle hierzu *Node* aus:
-    ![image](/images/webhooks/streamelements-integration/10_select-action-1.jpg)
-11. ... und danach *Run Node code*:
-    ![image](/images/webhooks/streamelements-integration/11_select-action-2.jpg)
-12. 1. Vergebe hier zunächst einen neuen Namen für die Action (bspw. `streamelements_tip`). Dazu klickst du einfach auf *code* innehralb der Action;
-    2. Füge Folgenden Code in der rot markierten Box neben der Zahl 2 ein:
-        
-        ```js
-        import axios from "axios"
-
-        export default defineComponent({
-          props: {
-            streamelementsAccountId: {
-              type: "string",
-              label: "StreamElements Konto-ID"
+    export default defineComponent({
+        props: {
+        streamelementsAccountId: {
+            type: "string",
+            label: "StreamElements Konto-ID"
+        },
+        streamelementsAccessToken: {
+            type: "string",
+            label: "StreamElements Access Token"
+        }
+        },
+        async run({ steps, $ }) {
+        await axios.post(`https://api.streamelements.com/kappa/v2/tips/${this.streamelementsAccountId}`, {
+            user:
+            {
+                username: `${steps.trigger.event.data.name ?? 'Anonymous'}`,
+                userId: steps.trigger.event.data.donor_id ?? '00000000-0000-0000-0000-000000000000',
+                email: 'no@email.no',
             },
-            streamelementsAccessToken: {
-              type: "string",
-              label: "StreamElements Access Token"
+            provider: "improfans",
+            message: `${steps.trigger.event.data.message}`,
+            amount: steps.trigger.event.data.amount,
+            currency: steps.trigger.event.data.currency,
+            imported: "true",
+            }, {
+            headers: {
+            'Authorization': `Bearer ${this.streamelementsAccessToken}`,
             }
-          },
-          async run({ steps, $ }) {
-            await axios.post(`https://api.streamelements.com/kappa/v2/tips/${this.streamelementsAccountId}`, {
-                user:
-                {
-                  username: `${steps.trigger.event.data.name ?? 'Anonymous'}`,
-                  userId: steps.trigger.event.data.donor_id ?? '00000000-0000-0000-0000-000000000000',
-                  email: 'no@email.no',
-                },
-                provider: "improfans",
-                message: `${steps.trigger.event.data.message}`,
-                amount: steps.trigger.event.data.amount,
-                currency: steps.trigger.event.data.currency,
-                imported: "true",
-              }, {
-              headers: {
-                'Authorization': `Bearer ${this.streamelementsAccessToken}`,
-              }
-            });
-          },
-        })
-        ```
-    3. Nachdem du den Code eingefügt hast, klicke auf *Refresh fields*, damit die Felder für deine StreamElements Konto-ID und -Token angezeigt werden:
-    
-    ![image](/images/webhooks/streamelements-integration/12_configure-action-1.jpg)
-13. Füge nun deine StreamElements Konto-ID und -Token von vorhin (s. oben) in die dafür vorgesehenen Felder (*StreamElements Konto-ID* und *StreamElements Access Token*):
-    ![image](/images/webhooks/streamelements-integration/13_configure-action-2.jpg)
-14. Klicke nun auf *Deploy*, um den Workflow zu starten, sodass du unsere Webhook-Events empfangen kannst:
-    ![image](/images/webhooks/streamelements-integration/14_deploy-1.jpg)
-15. Kopiere nun den Link in der rot markierten Box:
-    ![image](/images/webhooks/streamelements-integration/15_deploy-2.jpg)
-16. Logge dich in deinen ImproFans-Account ein und öffne die [Webhook-Übersicht](https://improfans.de/u/webhooks). Füge den Link vom Pipedream-Endpunkt nun hier ein und drücke anschließend auf *Webhook hinzufügen*:
-    ![image](/images/webhooks/streamelements-integration/16_add-improfans-webhook.de.jpg)
+        });
+        },
+    })
+    ```
+16. Nachdem du den Code eingefügt hast, klicke auf *Refresh fields*, damit die Felder für deine StreamElements Konto-ID und -Token angezeigt werden:
+    ![image](/images/webhooks/streamelements-integration/16_configure-action-3.jpg)
+17. Füge nun deine StreamElements Konto-ID und -Token von vorhin (s. oben) in die dafür vorgesehenen Felder (*StreamElements Konto-ID* und *StreamElements Access Token*):
+    ![image](/images/webhooks/streamelements-integration/17_configure-action-4.jpg)
+18. Klicke nun auf *Deploy*, um den Workflow zu starten, sodass du unsere Webhook-Events empfangen kannst:
+    ![image](/images/webhooks/streamelements-integration/18_deploy.jpg)
 
-Jetzt bist du startklar, um Spendenbenachrichtigungen bei StreamElements zu empfangen. 
+Jetzt bist du startklar, um Spendenbenachrichtigungen bei StreamElements zu empfangen.

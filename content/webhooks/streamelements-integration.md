@@ -73,14 +73,14 @@ Damit du die API von StreamElements nutzen kannst, benötigst du deine StreamEle
         await axios.post(`https://api.streamelements.com/kappa/v2/tips/${this.streamelementsAccountId}`, {
             user:
             {
-                username: `${steps.trigger.event.data.name ?? 'Anonymous'}`,
-                userId: steps.trigger.event.data.donor_id ?? '00000000-0000-0000-0000-000000000000',
+                username: `${steps.trigger.event.body.data.name ?? 'Anonymous'}`,
+                userId: steps.trigger.event.body.data.donor_id ?? '00000000-0000-0000-0000-000000000000',
                 email: 'no@email.no',
             },
             provider: "improfans",
-            message: `${steps.trigger.event.data.message}`,
-            amount: steps.trigger.event.data.amount,
-            currency: steps.trigger.event.data.currency,
+            message: `${steps.trigger.event.body.data.message}`,
+            amount: steps.trigger.event.body.data.amount,
+            currency: steps.trigger.event.body.data.currency,
             imported: "true",
             }, {
             headers: {

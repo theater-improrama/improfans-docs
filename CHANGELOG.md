@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.4.5](https://github.com/theater-improrama/improfans-docs/compare/v1.4.4...v1.4.5) (2025-01-04)
+
 ## [1.4.4](https://github.com/theater-improrama/improfans-docs/compare/v1.4.3...v1.4.4) (2025-01-04)
 
 ## [1.4.3](https://github.com/theater-improrama/improfans-docs/compare/v1.4.2...v1.4.3) (2025-01-04)

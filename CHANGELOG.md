@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.4.3](https://github.com/theater-improrama/improfans-docs/compare/v1.4.2...v1.4.3) (2025-01-04)
+
+
+### Bug Fixes
+
+* snippet typo in documentation ([3d2c5f8](https://github.com/theater-improrama/improfans-docs/commit/3d2c5f8a896cb0033e819efc015128b79bd3b572))
+
 ## [1.4.2](https://github.com/theater-improrama/improfans-docs/compare/v1.4.1...v1.4.2) (2024-12-27)
 
 ## [1.4.1](https://github.com/theater-improrama/improfans-docs/compare/v1.4.0...v1.4.1) (2024-12-23)

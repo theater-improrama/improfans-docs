@@ -3,7 +3,7 @@ title: 'StreamElements Integration'
 date: 2024-12-21T16:51:10+01:00
 ---
 
-[StreamElements](https://streamelements.com/) bietet eine [Schnittstelle (API) für eingehende Spenden](https://dev.streamelements.com/docs/api-docs/7e632a4cecfe1-channel) von Drittanbietern an - zum Beispiel von ImproFans. D. h. Spenden, die über ImproFans getätigt werden, können auch live über StreamElements angezeigt werden.
+[StreamElements](https://streamelements.com/) bietet eine [Schnittstelle (API) für eingehende Spenden](https://dev.streamelements.com/docs/api-docs/7e632a4cecfe1-channel) von Drittanbietern an - zum Beispiel von ImproFans. D.h. Spenden, die über ImproFans getätigt werden, können auch live über StreamElements angezeigt werden.
 
 Im Folgenden wird gezeigt, wie man über verschiedene Plattformen unseren Webhook einrichtet.
 

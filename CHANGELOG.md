@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.5.1](https://github.com/theater-improrama/improfans-docs/compare/v1.5.0...v1.5.1) (2025-01-18)
+
+
+### Bug Fixes
+
+* add missing image ([d969f50](https://github.com/theater-improrama/improfans-docs/commit/d969f5063a5f24aa44e3b3d3583e52952db1d530))
+
 ## [1.5.0](https://github.com/theater-improrama/improfans-docs/compare/v1.4.5...v1.5.0) (2025-01-14)
 
 

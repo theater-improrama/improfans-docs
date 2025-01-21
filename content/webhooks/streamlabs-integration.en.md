@@ -39,7 +39,7 @@ Below we'll show how to set up our webhook through different platforms.
     ![image](/images/webhooks/streamlabs-integration/11_select-action-1.jpg)
 13. Then click the *Use any Streamlabs API in Node.js* button:
     ![image](/images/webhooks/streamlabs-integration/12_select-action-2.jpg)
-14. First assign a new name for the action (e.g. `streamlabs_tip`). Simply click on the action name (default is *streamlabs*) and enter a new name:
+14. Assign a new name to the action named *streamlabs* by clicking on it. Rename the action to *streamlabs_tip*:
     ![image](/images/webhooks/streamlabs-integration/13_configure-action-1.jpg)
 15. Insert the code below the image in the red marked box:
     ![image](/images/webhooks/streamlabs-integration/14_configure-action-2.jpg)

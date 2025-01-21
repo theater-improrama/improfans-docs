@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.5.3](https://github.com/theater-improrama/improfans-docs/compare/v1.5.2...v1.5.3) (2025-01-21)
+
+
+### Bug Fixes
+
+* update streamlabs integration page ([6dfee8a](https://github.com/theater-improrama/improfans-docs/commit/6dfee8a70c99f77a6565dbe6137071a9bafbfa62))
+
 ## [1.5.2](https://github.com/theater-improrama/improfans-docs/compare/v1.5.1...v1.5.2) (2025-01-18)
 
 

@@ -41,7 +41,7 @@ Below we'll show how to set up our webhook through different platforms.
     ![image](/images/webhooks/streamlabs-integration/12_select-action-2.jpg)
 14. Assign a new name to the action named *streamlabs* by clicking on it. Rename the action to *streamlabs_tip*:
     ![image](/images/webhooks/streamlabs-integration/13_configure-action-1.jpg)
-15. Insert the code below the image in the red marked box:
+15. Delete the existing standard code from the text field (red rectangle in the image) and then insert the code below the image:
     ![image](/images/webhooks/streamlabs-integration/14_configure-action-2.jpg)
     ```js
     import axios from "axios"

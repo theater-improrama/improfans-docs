@@ -51,9 +51,9 @@ Damit du die API von StreamElements nutzen kannst, benötigst du deine StreamEle
     ![image](/images/webhooks/streamelements-integration/12_select-action-1.jpg)
 13. ... und danach *Run Node code*:
     ![image](/images/webhooks/streamelements-integration/13_select-action-2.jpg)
-14. Vergebe hier zunächst einen neuen Namen für die Action (bspw. `streamelements_tip`). Klicke dazu einfach auf den Namen der Action (standardmäßig *code*) und gib dann einen neuen Namen ein:
+14. Vergib hier zunächst einen neuen Namen für die Action (bspw. `streamelements_tip`). Klicke dazu einfach auf den Namen der Action (standardmäßig *code*) und gib dann einen neuen Namen ein:
     ![image](/images/webhooks/streamelements-integration/14_configure-action-1.jpg)
-15. Füge den Code unter dem Bild in der rot markierten Box ein:
+15. Lösche den vorhandenen Standardcode aus dem Textfeld (rotes Rechteck im Bild) und füge dort anschließend den Code unter dem Bild ein:
     ![image](/images/webhooks/streamelements-integration/15_configure-action-2.jpg)
     ```js
     import axios from "axios"

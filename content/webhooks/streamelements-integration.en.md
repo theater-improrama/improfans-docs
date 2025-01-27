@@ -53,7 +53,7 @@ To use the StreamElements API, you need your StreamElements "Account ID" and "JW
     ![image](/images/webhooks/streamelements-integration/13_select-action-2.jpg)
 14. First enter a new name for the action (e.g. `streamelements_tip`). To do this, simply click on the name of the action (*code* by default) and then enter a new name:
     ![image](/images/webhooks/streamelements-integration/14_configure-action-1.jpg)
-15. Insert the code below the image in the red marked box:
+15. Delete the existing standard code from the text field (red rectangle in the image) and then insert the code below the image:
     ![image](/images/webhooks/streamelements-integration/15_configure-action-2.jpg)
     ```js
     import axios from "axios"

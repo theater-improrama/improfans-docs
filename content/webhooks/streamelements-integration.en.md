@@ -13,6 +13,10 @@ The following shows how to set up our webhook across different platforms.
 
 ### Obtaining StreamElements Credentials
 
+{{< callout type="warning" >}}
+  Important: The token that you copy from StreamElements is valid for approx. 180 days. After this has expired, you must update it again manually.
+{{< /callout >}}
+
 To use the StreamElements API, you need your StreamElements "Account ID" and "JWT Token" (hereafter just "Token"). Here's how to get them:
 
 1. Log in to StreamElements [dashboard](https://streamelements.com/dashboard).

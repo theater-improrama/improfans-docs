@@ -13,6 +13,10 @@ Im Folgenden wird gezeigt, wie man über verschiedene Plattformen unseren Webhoo
 
 ### StreamElements Zugangsdaten erhalten
 
+{{< callout type="warning" >}}
+  Wichtig: Der Token, den du von StreamElements kopierst ist ca. 180 Tage lang gültig. Nachdem dieser abgelaufen ist, musst du ihn erneut manuell aktualisieren.
+{{< /callout >}}
+
 Damit du die API von StreamElements nutzen kannst, benötigst du deine StreamElements "Konto-ID" und -"JWT Token" (folgend nur "Token"). Das machst du so:
 
 1. Bei StreamElements [einloggen](https://streamelements.com/dashboard).

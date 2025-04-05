@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.5.5](https://github.com/theater-improrama/improfans-docs/compare/v1.5.4...v1.5.5) (2025-04-05)
+
+
+### Bug Fixes
+
+* **docs:** add warning for StreamElements token ([9684740](https://github.com/theater-improrama/improfans-docs/commit/9684740cfa59086a303be33b78ee1913271ead71))
+
 ## [1.5.4](https://github.com/theater-improrama/improfans-docs/compare/v1.5.3...v1.5.4) (2025-01-27)
 
 ## [1.5.3](https://github.com/theater-improrama/improfans-docs/compare/v1.5.2...v1.5.3) (2025-01-21)
